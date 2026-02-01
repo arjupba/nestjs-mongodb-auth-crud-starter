@@ -1,40 +1,29 @@
-import {
-  Module,
-  forwardRef,
-  MiddlewareConsumer,
-  RequestMethod,
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
-import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './strategy/local.strategy';
+import { Module, forwardRef } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthController } from './auth.controller';
-import { JwtStrategy } from './strategy/jwt.strategy';
-import { ConfigModule, ConfigService } from 'nestjs-config';
-import { AuthValidationMiddleware } from './middleware/authValidationMiddleware';
+import { PassportModule } from '@nestjs/passport';
+
+import { AuthController } from '@apps/auth/auth.controller';
+import { AuthService } from '@apps/auth/auth.service';
+import { JwtStrategy } from '@apps/auth/strategy/jwt.strategy';
+import { LocalStrategy } from '@apps/auth/strategy/local.strategy';
+import { UsersModule } from '@apps/users/users.module';
 
 @Module({
+  controllers: [AuthController],
+  exports: [AuthService],
   imports: [
     JwtModule.registerAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('app.jwtSecret'),
+        secret: configService.get<string>('app.jwtSecret'),
         signOptions: { expiresIn: '60s' },
       }),
-      inject: [ConfigService],
     }),
     forwardRef(() => UsersModule),
     PassportModule,
   ],
-  exports: [AuthService],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-  controllers: [AuthController],
 })
-export class AuthModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthValidationMiddleware)
-      .forRoutes({ path: 'auth/login', method: RequestMethod.POST });
-  }
-}
+export class AuthModule {}

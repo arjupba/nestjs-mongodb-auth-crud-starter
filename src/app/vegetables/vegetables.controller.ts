@@ -1,62 +1,57 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
+  Param,
+  Patch,
+  Post,
   UseInterceptors,
-  Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { VegetablesService } from './vegetables.service';
+
+import { Auth } from '@apps/auth/guards';
+import { RoleEnum } from '@apps/users/domain/user.type';
+
+import { NotFoundInterceptor } from '@libs/notFoundInterceptor';
+
 import { CreateVegetableDto } from './dto/create-vegetable.dto';
 import { UpdateVegetableDto } from './dto/update-vegetable.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-import { NotFoundInterceptor } from '../../lib/notFoundInterceptor';
-import { QueryMen } from '../../lib/queryMen/queryMenDecorator';
-import { PaginationQueryDto } from '../../lib/queryMen/queryMenDto';
-import { ParamIdDto } from '../../lib/paramIdDto';
+import { VegetablesService } from './vegetables.service';
 
-@ApiTags('vegetables')
-@UseGuards(JwtAuthGuard)
 @Controller('vegetables')
 export class VegetablesController {
   constructor(private readonly vegetablesService: VegetablesService) {}
 
   @Post()
+  @Auth(RoleEnum.User)
   create(@Body() createVegetableDto: CreateVegetableDto) {
     return this.vegetablesService.create(createVegetableDto);
   }
 
   @Get()
-  findAll(
-    @QueryMen() { query, select, cursor },
-    @Query() _: PaginationQueryDto,
-  ) {
-    return this.vegetablesService.findAll(query, select, cursor);
+  @Auth(RoleEnum.Admin)
+  findAll() {
+    return this.vegetablesService.findAll();
   }
 
   @Get(':id')
+  @Auth(RoleEnum.Admin)
   @UseInterceptors(new NotFoundInterceptor('No vegetable found for given Id'))
-  findOne(@Param() params: ParamIdDto) {
-    return this.vegetablesService.findOne(params.id);
+  findOne(@Param('id') id: string) {
+    return this.vegetablesService.findOne(id);
   }
 
   @Patch(':id')
+  @Auth(RoleEnum.Admin)
   @UseInterceptors(new NotFoundInterceptor('No vegetable found for given Id'))
-  update(
-    @Param() params: ParamIdDto,
-    @Body() updateVegetableDto: UpdateVegetableDto,
-  ) {
-    return this.vegetablesService.update(params.id, updateVegetableDto);
+  update(@Param('id') id: string, @Body() updateVegetableDto: UpdateVegetableDto) {
+    return this.vegetablesService.update(id, updateVegetableDto);
   }
 
   @Delete(':id')
+  @Auth(RoleEnum.Admin)
   @UseInterceptors(new NotFoundInterceptor('No vegetable found for given Id'))
-  remove(@Param() params: ParamIdDto) {
-    return this.vegetablesService.remove(params.id);
+  remove(@Param('id') id: string) {
+    return this.vegetablesService.remove(id);
   }
 }

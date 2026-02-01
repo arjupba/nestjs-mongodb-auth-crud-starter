@@ -1,47 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsOptional,
-  IsEnum,
-  IsArray,
-  IsBoolean,
-  Length,
-} from 'class-validator';
-import { RoleEnum } from '../entities/user.entity';
-import {
-  ContainCapitalLetter,
-  ContainSmallLetter,
-  ContainNumber,
-  ContainSymbol,
-} from '../../../lib/validationDecorator';
-export class UpdateUserDto {
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @Length(8)
-  @ContainCapitalLetter()
-  @ContainSmallLetter()
-  @ContainNumber()
-  @ContainSymbol()
-  password: string;
+import { IsString } from 'class-validator';
 
-  @ApiProperty({ required: false })
-  @IsOptional()
+export class UpdateUserDtoAdmin {
+  @ApiProperty({ required: true })
+  @IsString()
   firstName: string;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
+  @ApiProperty({ required: true })
+  @IsString()
   lastName: string;
+}
 
-  @ApiProperty({ required: false })
-  @IsOptional()
-  avatar: string;
+export class UpdateUserDtoSelf {
+  @ApiProperty({ required: true })
+  @IsString()
+  firstName: string;
 
-  @ApiProperty({ enum: RoleEnum, isArray: true })
-  @IsEnum(RoleEnum, { each: true })
-  @IsArray()
-  roles: RoleEnum[] = [];
-
-  @ApiProperty({})
-  @IsOptional()
-  @IsBoolean()
-  isEnabled?: Boolean;
+  @ApiProperty({ required: true })
+  @IsString()
+  lastName: string;
 }

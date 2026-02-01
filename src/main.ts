@@ -1,35 +1,46 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ConfigService } from 'nestjs-config';
-import { AppModule } from './app.module';
-import { QueryMenExceptionFilter } from './lib/queryMen/queryMenInterceptor';
+import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import morgan from 'morgan';
+
+import { AppModule } from 'src/app.module';
+import { AppConfig } from 'src/config/app';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
-  const appConfig = configService.get('app');
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.use(morgan('dev'));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      forbidNonWhitelisted: true,
+      transform: true,
+      whitelist: true,
+    }),
+  );
   app.setGlobalPrefix('api/v1');
-  app.enableCors();
-  app.useGlobalFilters(new QueryMenExceptionFilter());
 
-  if (appConfig.development) {
-    const config = new DocumentBuilder()
-      .setTitle('Nest js mongo auth flow starter')
-      .setDescription(
-        `* Nest js\r\n* Auth Flow\r\n* Passport\r\n* Rolebased auth\r\n* Crud APIs\r\n* Validation`,
-      )
-      .setVersion('1.0')
-      .build();
-    const document = SwaggerModule.createDocument(app, config);
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('User API')
+    .setDescription('API documentation for User service')
+    .addSecurityRequirements('bearer')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const configService = app.get(ConfigService);
+  const appConfig = configService.getOrThrow<AppConfig>('app');
+  const port = appConfig.port;
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
 
-    SwaggerModule.setup('', app, document);
-  }
+  SwaggerModule.setup('api-docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
-  await app.listen(appConfig.port);
+  console.log(`listening on ${port}`);
 
-  console.log(`server listening on port ${appConfig.port}`);
+  await app.listen(port);
 }
 
-bootstrap();
+void bootstrap();

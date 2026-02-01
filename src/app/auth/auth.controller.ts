@@ -1,19 +1,30 @@
-import { Controller, Request, UseGuards, Post, Body } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
-import { Public } from './guards/jwt.auth.guard';
-import { LoginDto } from './dto/login.dto';
+import { Body, Controller, ForbiddenException, Post, Request } from '@nestjs/common';
 
-@ApiTags('auth')
+import { AuthService } from '@apps/auth/auth.service';
+import type { AuthenticatedRequest } from '@apps/auth/domain/auth.type';
+import { LoginDto } from '@apps/auth/dto/login.dto';
+import { RegisterUserDto } from '@apps/auth/dto/register-user.dto';
+import { Authenticate, Public } from '@apps/auth/guards';
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Public()
-  @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req, @Body() _: LoginDto) {
-    return this.authService.login(req.user);
+  @Authenticate()
+  async login(@Request() req: AuthenticatedRequest, @Body() login: LoginDto) {
+    const user = req.user;
+
+    if (!user.roles.includes(login.role)) {
+      throw new ForbiddenException('Role not allowed');
+    }
+
+    return this.authService.login(user, login.role);
+  }
+
+  @Public()
+  @Post('register')
+  async register(@Body() body: RegisterUserDto) {
+    return this.authService.register(body);
   }
 }

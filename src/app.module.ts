@@ -1,42 +1,21 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
-import { ConfigModule } from 'nestjs-config';
-import { MorganModule, MorganInterceptor } from 'nest-morgan';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-import { AppModule as srcAppModule } from './app/app.module';
-import { JwtAuthGuard } from './app/auth/guards/jwt.auth.guard';
 
-dotenv.config();
-
-let devProviders = [];
-
-if (process.env.NODE_ENV !== 'production') {
-  process.env.NODE_ENV = 'development';
-  mongoose.set('debug', true);
-  devProviders = [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: MorganInterceptor('tiny'),
-    },
-  ];
-}
+import { AppModule as srcAppModule } from 'src/app/app.module';
+import appConfig from 'src/config/app';
 
 @Module({
   imports: [
-    ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
-    MongooseModule.forRoot('mongodb://localhost/yt'),
-    MorganModule,
+    ConfigModule.forRoot({
+      envFilePath: ['.env'],
+      expandVariables: true,
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
+      isGlobal: true,
+      load: [appConfig],
+    }),
+    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://localhost:27017/test'),
     srcAppModule,
-  ],
-  providers: [
-    ...devProviders,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
   ],
 })
 export class AppModule {}

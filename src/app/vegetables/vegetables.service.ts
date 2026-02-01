@@ -1,61 +1,54 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateVegetableDto } from './dto/create-vegetable.dto';
-import { UpdateVegetableDto } from './dto/update-vegetable.dto';
-import { Vegetable, VegetableDocument } from './entities/vegetable.entity';
+
+import { CreateVegetableDto } from '@apps/vegetables/dto/create-vegetable.dto';
+import { UpdateVegetableDto } from '@apps/vegetables/dto/update-vegetable.dto';
+import {
+  VegetableDocument,
+  VegetableEntity,
+} from '@apps/vegetables/entities/vegetable.entity';
 
 @Injectable()
 export class VegetablesService {
   constructor(
-    @InjectModel(Vegetable.name)
-    private vegetableModel: Model<VegetableDocument>,
+    @InjectModel(VegetableEntity.name)
+    private readonly vegetableModel: Model<VegetableDocument>,
   ) {}
 
   async create(createVegetableDto: CreateVegetableDto) {
-    const createVegetable = new this.vegetableModel(createVegetableDto);
-
-    try {
-      const vegetable = await createVegetable.save();
-
-      return vegetable.view();
-    } catch (error) {
-      throw error;
-    }
+    return (await this.vegetableModel.create(createVegetableDto)).view();
   }
 
-  async findAll(query: Object, select: Object, cursor: Object) {
-    const users = await this.vegetableModel.find(query, select, cursor).exec();
-
-    return users.map((user) => user.view());
+  async findAll() {
+    return (await this.vegetableModel.find().exec()).map((vegetable) => vegetable.view());
   }
 
   async findOne(id: string) {
-    const vegetable = await this.vegetableModel.findOne({ _id: id }).exec();
-
-    return vegetable?.view();
+    return (await this.vegetableModel.findById(id).exec())?.view();
   }
 
   async update(id: string, updateVegetableDto: UpdateVegetableDto) {
-    const vegetable = await this.vegetableModel.findOne({ _id: id }).exec();
+    const vegetable = await this.vegetableModel.findById(id);
 
-    if (vegetable) {
-      const updatedVegetable = await Object.assign(
-        vegetable,
-        updateVegetableDto,
-      ).save();
+    if (!vegetable) return null;
 
-      return updatedVegetable.view();
-    }
+    Object.assign(vegetable, updateVegetableDto);
+
+    await vegetable.save({ validateModifiedOnly: true });
+
+    return vegetable.view();
   }
 
   async remove(id: string) {
-    const vegetable = await this.vegetableModel.findOne({ _id: id }).exec();
+    const vegetable = await this.vegetableModel.findById(id);
 
-    if (vegetable) {
-      await vegetable.remove();
+    if (!vegetable) return null;
 
-      return { ok: true, message: `Vegetable deleted ${id}` };
-    }
+    await vegetable.deleteOne();
+
+    return {
+      message: 'Vegetable deleted successfully',
+    };
   }
 }

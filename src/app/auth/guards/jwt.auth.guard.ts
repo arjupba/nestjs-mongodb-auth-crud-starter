@@ -1,6 +1,13 @@
-import { Injectable, SetMetadata, ExecutionContext } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  ExecutionContext,
+  Injectable,
+  SetMetadata,
+  applyDecorators,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiOperation } from '@nestjs/swagger';
+import { SecurityRequirementObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 
@@ -24,4 +31,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 }
 
-export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
+export const Public = () =>
+  applyDecorators(
+    SetMetadata(IS_PUBLIC_KEY, true),
+    ApiOperation({ security: [] as SecurityRequirementObject[] }),
+  );

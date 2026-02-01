@@ -1,8 +1,8 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
   NotFoundException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -15,7 +15,7 @@ export class NotFoundInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, stream$: CallHandler): Observable<any> {
     return stream$.handle().pipe(
       tap((data) => {
-        if (data === undefined) {
+        if (!data) {
           throw new NotFoundException(this.errorMessage);
         }
       }),

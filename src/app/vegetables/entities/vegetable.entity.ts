@@ -1,37 +1,28 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import mongooseKeywords from 'mongoose-keywords';
+import { HydratedDocument } from 'mongoose';
 
-export type VegetableDocument = Vegetable & Document;
-
+export type VegetableDocument = HydratedDocument<VegetableEntity>;
 @Schema({
+  collection: 'vegetables',
   timestamps: true,
 })
-export class Vegetable {
+export class VegetableEntity {
   @Prop({ required: true })
   name: string;
 
   @Prop({ required: true })
   color: string;
 
-  @Prop({ required: true })
-  price: number;
-
   view: Function;
 }
 
-export const VegetableSchema = SchemaFactory.createForClass(Vegetable);
+export const VegetableSchema = SchemaFactory.createForClass(VegetableEntity);
 
-VegetableSchema.plugin(mongooseKeywords, {
-  paths: ['name', 'color'],
-});
-
-VegetableSchema.methods.view = function (full) {
+VegetableSchema.methods.view = function (full: boolean = false) {
   const view = {
+    color: this.color,
     id: this.id,
     name: this.name,
-    color: this.color,
-    price: this.price,
   };
 
   return full

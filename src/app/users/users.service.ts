@@ -1,79 +1,63 @@
-import {
-  Inject,
-  Injectable,
-  forwardRef,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserDocument } from './entities/user.entity';
-import { AuthService } from '../auth/auth.service';
+import { QueryMenType } from 'nestjs-querymen';
+
+import { RegisterUserDto } from '@apps/auth/dto/register-user.dto';
+import { UserDocument, UserEntity } from '@apps/users/entities/user.entity';
+
+import { ObjectLiteral } from '@libs/golbal';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-    @Inject(forwardRef(() => AuthService)) private authService: AuthService,
+    @InjectModel(UserEntity.name)
+    private readonly userModel: Model<UserDocument>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const createUser = new this.userModel(createUserDto);
-
-    try {
-      const user = await createUser.save();
-
-      return this.authService.login(user.view());
-    } catch (error) {
-      if (error.code === 11000) {
-        throw new ConflictException(
-          `User already registered with mail id ${createUserDto.email}`,
-        );
-      }
-
-      throw error;
-    }
+  async register(registerUserDto: RegisterUserDto) {
+    return (await this.userModel.create(registerUserDto)).view();
   }
 
-  async findAll(query, select, cursor) {
-    const users = await this.userModel.find(query, select, cursor).exec();
-
-    return users.map((user) => user.view());
+  async findAll({ query, select, cursor }: QueryMenType) {
+    return (await this.userModel.find(query, select, cursor).exec()).map((user) =>
+      user.view(),
+    );
   }
 
   async findOne(id: string) {
-    const user = await this.userModel.findOne({ _id: id }).exec();
-
-    return user?.view();
+    return (await this.userModel.findById(id).exec())?.view();
   }
 
-  async findOneByUserName(userName) {
-    const user = await this.userModel.findOne({ email: userName }).exec();
+  async update(id: string, updateUserDto: ObjectLiteral) {
+    const user = await this.userModel.findById(id);
 
-    return user?.view(true);
-  }
-
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.userModel.findOne({ _id: id }).exec();
-
-    if (user) {
-      const updatedUser = await Object.assign(user, {
-        ...updateUserDto,
-        roles: updateUserDto.roles?.length ? updateUserDto.roles : user.roles,
-      }).save();
-
-      return updatedUser.view();
+    if (!user) {
+      return null;
     }
+
+    Object.assign(user, updateUserDto);
+
+    await user.save({ validateModifiedOnly: true });
+
+    return user.view();
   }
 
   async remove(id: string) {
-    const user = await this.userModel.findOne({ _id: id }).exec();
+    const user = await this.userModel.findById(id);
 
-    if (user) {
-      await user.remove();
-
-      return { ok: true, message: `User deleted ${id}` };
+    if (!user) {
+      return null;
     }
+
+    await user.deleteOne();
+
+    return {
+      message: 'User deleted successfully',
+    };
+  }
+
+  async findOneByUserName(userName: string) {
+    return await this.userModel.findOne({ email: userName }).exec();
   }
 }

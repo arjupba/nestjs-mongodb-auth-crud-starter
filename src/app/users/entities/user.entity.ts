@@ -1,48 +1,44 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import mongooseKeywords from 'mongoose-keywords';
 import bcrypt from 'bcryptjs';
+import { HydratedDocument } from 'mongoose';
 
-export type UserDocument = User & Document;
-export enum RoleEnum {
-  Manager = 'mngr',
-  User = 'user',
-  Admin = 'admin',
-}
+import { RoleEnum } from '@apps/users/domain/user.type';
 
+export type UserDocument = HydratedDocument<UserEntity>;
 @Schema({
+  collection: 'users',
   timestamps: true,
 })
-export class User {
-  @Prop({ unique: true, required: true })
-  email: string;
-
-  @Prop()
-  password: string;
-
-  @Prop()
+export class UserEntity {
+  @Prop({ required: true })
   firstName: string;
 
-  @Prop()
+  @Prop({ required: true })
   lastName: string;
+
+  @Prop({ required: true, unique: true })
+  email: string;
+
+  @Prop({ required: true })
+  password: string;
 
   @Prop({ required: false })
   avatar: string;
 
-  @Prop({ type: [String], enum: RoleEnum, default: RoleEnum.User })
+  @Prop({
+    default: RoleEnum.User,
+    enum: RoleEnum,
+    type: [String],
+  })
   roles: string[];
 
-  @Prop({})
+  @Prop({ default: false })
   isEnabled: Boolean;
 
   view: Function;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.plugin(mongooseKeywords, {
-  paths: ['email', 'firstName', 'lastName'],
-});
+export const UserSchema = SchemaFactory.createForClass(UserEntity);
 
 UserSchema.pre('save', async function (next) {
   const user = this;
@@ -63,15 +59,15 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
-UserSchema.methods.view = function (full) {
+UserSchema.methods.view = function (full: boolean = false) {
   const view = {
-    id: this.id,
+    avatar: this.avatar,
     email: this.email,
     firstName: this.firstName,
-    lastName: this.lastName,
-    avatar: this.avatar,
-    roles: this.roles,
+    id: this.id,
     isEnabled: this.isEnabled,
+    lastName: this.lastName,
+    roles: this.roles,
   };
 
   return full

@@ -1,23 +1,18 @@
-import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { VegetablesService } from './vegetables.service';
-import { VegetablesController } from './vegetables.controller';
-import { Vegetable, VegetableSchema } from './entities/vegetable.entity';
-import { middleware as query } from 'querymen';
+
+import {
+  VegetableEntity,
+  VegetableSchema,
+} from '@apps/vegetables/entities/vegetable.entity';
+import { VegetablesController } from '@apps/vegetables/vegetables.controller';
+import { VegetablesService } from '@apps/vegetables/vegetables.service';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: Vegetable.name, schema: VegetableSchema },
-    ]),
-  ],
   controllers: [VegetablesController],
+  imports: [
+    MongooseModule.forFeature([{ name: VegetableEntity.name, schema: VegetableSchema }]),
+  ],
   providers: [VegetablesService],
 })
-export class VegetablesModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(query({}))
-      .forRoutes({ path: 'vegetables', method: RequestMethod.GET });
-  }
-}
+export class VegetablesModule {}

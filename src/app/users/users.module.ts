@@ -1,28 +1,18 @@
-import {
-  Module,
-  forwardRef,
-  MiddlewareConsumer,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersService } from './users.service';
-import { UsersController } from './users.controller';
-import { User, UserSchema } from './entities/user.entity';
-import { AuthModule } from '../auth/auth.module';
-import { middleware as query } from 'querymen';
+
+import { AuthModule } from '@apps/auth/auth.module';
+import { UserEntity, UserSchema } from '@apps/users/entities/user.entity';
+import { UsersController } from '@apps/users/users.controller';
+import { UsersService } from '@apps/users/users.service';
+
 @Module({
+  controllers: [UsersController],
+  exports: [UsersService],
   imports: [
     forwardRef(() => AuthModule),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: UserEntity.name, schema: UserSchema }]),
   ],
-  controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService],
 })
-export class UsersModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(query({}))
-      .forRoutes({ path: 'users', method: RequestMethod.GET });
-  }
-}
+export class UsersModule {}

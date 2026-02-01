@@ -1,19 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsHexColor, IsNotEmpty, IsNumber, Min } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateVegetableDto {
   @ApiProperty({ required: true })
-  @IsNotEmpty()
+  @IsString()
   name: string;
 
   @ApiProperty({ required: true })
-  @IsNotEmpty()
-  @IsHexColor()
+  @IsString()
   color: string;
-
-  @ApiProperty({ required: true })
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  price: string;
 }

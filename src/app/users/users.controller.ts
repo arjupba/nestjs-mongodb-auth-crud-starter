@@ -1,73 +1,81 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseInterceptors,
+  Get,
+  Param,
+  Patch,
+  Request,
   UseGuards,
-  Query,
+  UseInterceptors,
 } from '@nestjs/common';
+import { QueryMen, type QueryMenType, UseQueryMen } from 'nestjs-querymen';
 
-import { ApiTags } from '@nestjs/swagger';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtAuthGuard, Public } from '../auth/guards/jwt.auth.guard';
-import { User } from '../../lib/userDecorator';
-import { RoleEnum } from './entities/user.entity';
-import RoleGuard from '../auth/guards/role.gurad';
-import { NotFoundInterceptor } from '../../lib/notFoundInterceptor';
-import { QueryMen } from '../../lib/queryMen/queryMenDecorator';
-import { PaginationQueryDto } from '../../lib/queryMen/queryMenDto';
-@ApiTags('users')
-@UseGuards(JwtAuthGuard)
+import type { AuthenticatedRequest } from '@apps/auth/domain/auth.type';
+import { Auth } from '@apps/auth/guards';
+import RoleGuard from '@apps/auth/guards/role.gurad';
+import { RoleEnum } from '@apps/users/domain/user.type';
+import { UpdateUserDtoAdmin, UpdateUserDtoSelf } from '@apps/users/dto/update-user.dto';
+import { UsersService } from '@apps/users/users.service';
+
+import { NotFoundInterceptor } from '@libs/notFoundInterceptor';
+import { ParamIdDto } from '@libs/paramIdDto';
+
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Public()
-  @Post('signUp')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
-  @UseGuards(RoleGuard(RoleEnum.Admin))
   @Get()
-  findAll(
-    @QueryMen() { query, select, cursor },
-    @Query() _: PaginationQueryDto,
-  ) {
-    return this.usersService.findAll(query, select, cursor);
+  @UseQueryMen({
+    limit: {
+      default: 10,
+      max: 105,
+      min: 1,
+    },
+    page: {
+      default: 1,
+      max: 1000,
+      min: 1,
+    },
+    sort: '-createdAt',
+  })
+  @Auth(RoleEnum.Admin)
+  findAll(@QueryMen() q: QueryMenType) {
+    return this.usersService.findAll(q);
   }
 
-  @UseGuards(RoleGuard(RoleEnum.Admin, true))
-  @UseInterceptors(new NotFoundInterceptor('No user found for given userId'))
+  @Get('self')
+  @Auth(RoleEnum.User)
+  findSelf(@Request() req: AuthenticatedRequest) {
+    return this.usersService.findOne(req.user.id);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string, @User() user) {
-    const userId = id === 'self' ? user.id : id;
-
-    return this.usersService.findOne(userId);
-  }
-
-  @UseGuards(RoleGuard(RoleEnum.Admin, true))
-  @UseInterceptors(new NotFoundInterceptor('No user found for given userId'))
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-    @User() user,
-  ) {
-    const userId = id === 'self' ? (delete updateUserDto.roles, user.id) : id;
-
-    return this.usersService.update(userId, updateUserDto);
-  }
-
   @UseGuards(RoleGuard(RoleEnum.Admin))
-  @UseInterceptors(new NotFoundInterceptor('No user found for given userId'))
+  @UseInterceptors(new NotFoundInterceptor('No user found for given Id'))
+  findOne(@Param() param: ParamIdDto) {
+    return this.usersService.findOne(param.id);
+  }
+
+  @Patch('self')
+  @UseGuards(RoleGuard(RoleEnum.Admin))
+  updateSelf(
+    @Request() req: AuthenticatedRequest,
+    @Body() updateUserDto: UpdateUserDtoSelf,
+  ) {
+    return this.usersService.update(req.user.id, updateUserDto);
+  }
+
+  @Patch(':id')
+  @UseGuards(RoleGuard(RoleEnum.Admin))
+  @UseInterceptors(new NotFoundInterceptor('No user found for given Id'))
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDtoAdmin) {
+    return this.usersService.update(id, updateUserDto);
+  }
+
   @Delete(':id')
+  @UseGuards(RoleGuard(RoleEnum.Admin))
+  @UseInterceptors(new NotFoundInterceptor('No user found for given Id'))
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

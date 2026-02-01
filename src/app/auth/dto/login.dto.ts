@@ -1,26 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, Length } from 'class-validator';
-import {
-  ContainCapitalLetter,
-  ContainSmallLetter,
-  ContainNumber,
-  ContainSymbol,
-  IsNotFreeEmail,
-} from '../../../lib/validationDecorator';
+import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+
+import { RoleEnum } from '@apps/users/domain/user.type';
 
 export class LoginDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsEmail()
-  @IsNotFreeEmail()
   username: string;
 
   @ApiProperty({ required: true })
   @IsNotEmpty()
-  @Length(8)
-  @ContainCapitalLetter()
-  @ContainSmallLetter()
-  @ContainNumber()
-  @ContainSymbol()
   password: string;
+
+  @ApiProperty({
+    enum: RoleEnum,
+    enumName: 'RoleEnum',
+    example: RoleEnum.User,
+    required: true,
+  })
+  @IsEnum(RoleEnum)
+  role: RoleEnum;
 }
