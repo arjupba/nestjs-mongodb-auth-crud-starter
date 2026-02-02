@@ -6,14 +6,12 @@ import {
   Param,
   Patch,
   Request,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { QueryMen, type QueryMenType, UseQueryMen } from 'nestjs-querymen';
 
 import type { AuthenticatedRequest } from '@apps/auth/domain/auth.type';
 import { Auth } from '@apps/auth/guards';
-import RoleGuard from '@apps/auth/guards/role.gurad';
 import { RoleEnum } from '@apps/users/domain/user.type';
 import { UpdateUserDtoAdmin, UpdateUserDtoSelf } from '@apps/users/dto/update-user.dto';
 import { UsersService } from '@apps/users/users.service';
@@ -51,14 +49,14 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseGuards(RoleGuard(RoleEnum.Admin))
+  @Auth(RoleEnum.Admin)
   @UseInterceptors(new NotFoundInterceptor('No user found for given Id'))
   findOne(@Param() param: ParamIdDto) {
     return this.usersService.findOne(param.id);
   }
 
   @Patch('self')
-  @UseGuards(RoleGuard(RoleEnum.Admin))
+  @Auth(RoleEnum.User)
   updateSelf(
     @Request() req: AuthenticatedRequest,
     @Body() updateUserDto: UpdateUserDtoSelf,
@@ -67,14 +65,14 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @UseGuards(RoleGuard(RoleEnum.Admin))
+  @Auth(RoleEnum.Admin)
   @UseInterceptors(new NotFoundInterceptor('No user found for given Id'))
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDtoAdmin) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @UseGuards(RoleGuard(RoleEnum.Admin))
+  @Auth(RoleEnum.Admin)
   @UseInterceptors(new NotFoundInterceptor('No user found for given Id'))
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
