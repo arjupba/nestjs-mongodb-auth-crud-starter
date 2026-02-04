@@ -38,7 +38,10 @@ async function bootstrap() {
     },
   });
 
+  // eslint-disable-next-line no-console
   console.log(`listening on ${port}`);
+  // eslint-disable-next-line no-console
+  console.log(`Swagger API documentation on http://localhost:${port}/api-docs`);
 
   await app.listen(port);
 }

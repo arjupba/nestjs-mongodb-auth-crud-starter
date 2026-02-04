@@ -42,6 +42,7 @@ $ npm run start
 
 # watch mode
 $ npm run start:dev
+# api doc at http://localhost:3000/api-docs
 
 # production mode
 $ npm run start:prod
