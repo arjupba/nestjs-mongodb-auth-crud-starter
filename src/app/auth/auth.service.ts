@@ -44,7 +44,10 @@ export class AuthService {
   }
 
   async login(user: User, role: RoleEnum) {
-    const payload = { id: user.id, role };
+    const payload = {
+      activeRole: role,
+      id: user.id,
+    };
 
     return {
       access_token: this.jwtService.sign(payload),
@@ -56,7 +59,10 @@ export class AuthService {
   async register(body: any) {
     try {
       const user = await this.usersService.register(body);
-      const payload = { id: user.id, role: RoleEnum.User };
+      const payload = {
+        activeRole: RoleEnum.User,
+        id: user.id,
+      };
 
       return {
         access_token: this.jwtService.sign(payload),

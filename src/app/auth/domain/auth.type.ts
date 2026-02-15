@@ -1,7 +1,9 @@
 import { Request as Req } from 'express';
 
-import { User } from '@apps/users/domain/user.type';
+import { RoleEnum, User } from '@apps/users/domain/user.type';
+
+export type AuthorizedUser = User & { activeRole: RoleEnum };
 
 export interface AuthenticatedRequest extends Req {
-  user: User;
+  user: AuthorizedUser;
 }

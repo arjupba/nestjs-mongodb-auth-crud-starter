@@ -11,12 +11,11 @@ import {
 
 import { Auth } from '@apps/auth/guards';
 import { RoleEnum } from '@apps/users/domain/user.type';
+import { CreateVegetableDto } from '@apps/vegetables/dto/create-vegetable.dto';
+import { UpdateVegetableDto } from '@apps/vegetables/dto/update-vegetable.dto';
+import { VegetablesService } from '@apps/vegetables/vegetables.service';
 
 import { NotFoundInterceptor } from '@libs/notFoundInterceptor';
-
-import { CreateVegetableDto } from './dto/create-vegetable.dto';
-import { UpdateVegetableDto } from './dto/update-vegetable.dto';
-import { VegetablesService } from './vegetables.service';
 
 @Controller('vegetables')
 export class VegetablesController {

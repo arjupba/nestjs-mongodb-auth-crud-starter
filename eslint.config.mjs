@@ -182,6 +182,13 @@ export default [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: ['../*', './*'],
+        },
+      ],
     },
   },
 ];

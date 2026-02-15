@@ -18,11 +18,14 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  app.enableCors({
+    origin: true,
+  });
   app.setGlobalPrefix('api/v1');
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('User API')
-    .setDescription('API documentation for User service')
+    .setTitle('Nest JS Apps API')
+    .setDescription('Nest JS Apps API documentation')
     .addSecurityRequirements('bearer')
     .setVersion('1.0')
     .addBearerAuth()
