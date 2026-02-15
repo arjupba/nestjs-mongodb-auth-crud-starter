@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 import { CreateVegetableDto } from '@apps/vegetables/dto/create-vegetable.dto';
 import { UpdateVegetableDto } from '@apps/vegetables/dto/update-vegetable.dto';
@@ -14,9 +16,12 @@ export class VegetablesService {
   constructor(
     @InjectModel(VegetableEntity.name)
     private readonly vegetableModel: Model<VegetableDocument>,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async create(createVegetableDto: CreateVegetableDto) {
+    this.logger.info('Creating a new vegetable');
+
     return (await this.vegetableModel.create(createVegetableDto)).view();
   }
 

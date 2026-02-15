@@ -3,13 +3,16 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import morgan from 'morgan';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 import { AppModule } from 'src/app.module';
 import { AppConfig } from 'src/config/app';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
 
+  app.useLogger(logger);
   app.use(morgan('dev'));
   app.useGlobalPipes(
     new ValidationPipe({
@@ -41,10 +44,13 @@ async function bootstrap() {
     },
   });
 
-  // eslint-disable-next-line no-console
-  console.log(`listening on ${port}`);
-  // eslint-disable-next-line no-console
-  console.log(`Swagger API documentation on http://localhost:${port}/api-docs`);
+  logger.log('\x1b[96m' + 'Application started successfully' + '\x1b[0m');
+  logger.log('\x1b[96m' + `listening on ${port}` + '\x1b[0m');
+  logger.log(
+    '\x1b[96m' +
+      `Swagger API documentation on http://localhost:${port}/api-docs` +
+      '\x1b[0m',
+  );
 
   await app.listen(port);
 }

@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
-
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import sleep from 'await-sleep';
 import { AxiosBasicCredentials, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 import { ObjectLiteral } from '@libs/golbal';
 
@@ -21,7 +20,10 @@ export type ApiConfigParams = {
 
 @Injectable()
 export class HttpClientService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async basicRequest<T>(
     options: AxiosRequestConfig,
@@ -44,10 +46,8 @@ export class HttpClientService {
         ) {
           await sleep(retryDelay);
 
-          console.warn(
-            `Unable to connect with API: ${options.method}/${
-              options.url
-            }. Retrying to the API call. Retry count: ${retryCount}. Message: ${error.message || JSON.stringify(error)}`,
+          this.logger.warn(
+            `Unable to connect with API: ${options.method}/${options.url}. Retrying to the API call. Retry count: ${retryCount}. Message: ${error.message || JSON.stringify(error)}`,
           );
 
           return await this.basicRequest<T>(
@@ -71,7 +71,7 @@ export class HttpClientService {
             error.response?.status
           }. Message: ${error.message || JSON.stringify(error)}`;
 
-          console.error(errorMessage);
+          this.logger.error(errorMessage);
 
           throw new Error(errorMessage);
         }

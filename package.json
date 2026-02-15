@@ -36,12 +36,14 @@
     "class-validator": "^0.14.3",
     "mongoose": "^8.21.0",
     "morgan": "^1.10.1",
+    "nest-winston": "^1.10.2",
     "nestjs-querymen": "^1.0.2",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "querymen": "^2.1.4",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "winston": "^3.18.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
