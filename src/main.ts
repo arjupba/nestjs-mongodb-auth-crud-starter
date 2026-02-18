@@ -44,6 +44,8 @@ async function bootstrap() {
     },
   });
 
+  await app.listen(port);
+
   logger.log('\x1b[96m' + 'Application started successfully' + '\x1b[0m');
   logger.log('\x1b[96m' + `listening on ${port}` + '\x1b[0m');
   logger.log(
@@ -51,8 +53,6 @@ async function bootstrap() {
       `Swagger API documentation on http://localhost:${port}/api-docs` +
       '\x1b[0m',
   );
-
-  await app.listen(port);
 }
 
 void bootstrap();
