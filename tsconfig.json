@@ -22,8 +22,30 @@
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@apps/*": ["src/app/*"],
-      "@libs/*": ["src/lib/*"]
+      "@apps/*": [
+        "src/apps/*"
+      ],
+      "@libs/*": [
+        "libs/*"
+      ],
+      "@libs/common": [
+        "libs/common/src"
+      ],
+      "@libs/common/*": [
+        "libs/common/src/*"
+      ],
+      "@libs/http-client": [
+        "libs/http-client/src"
+      ],
+      "@libs/http-client/*": [
+        "libs/http-client/src/*"
+      ],
+      "@libs/logger": [
+        "libs/logger/src"
+      ],
+      "@libs/logger/*": [
+        "libs/logger/src/*"
+      ]
     }
   }
 }

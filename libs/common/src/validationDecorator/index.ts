@@ -4,7 +4,7 @@ import {
   registerDecorator,
 } from 'class-validator';
 
-import { ObjectLiteral } from '@libs/golbal';
+import { ObjectLiteral } from '@libs/common';
 
 export function ContainCapitalLetter(validationOptions?: ValidationOptions) {
   return function (object: ObjectLiteral, propertyName: string) {

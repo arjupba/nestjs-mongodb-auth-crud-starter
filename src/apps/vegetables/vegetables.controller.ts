@@ -15,7 +15,7 @@ import { CreateVegetableDto } from '@apps/vegetables/dto/create-vegetable.dto';
 import { UpdateVegetableDto } from '@apps/vegetables/dto/update-vegetable.dto';
 import { VegetablesService } from '@apps/vegetables/vegetables.service';
 
-import { NotFoundInterceptor } from '@libs/notFoundInterceptor';
+import { NotFoundInterceptor } from '@libs/common';
 
 @Controller('vegetables')
 export class VegetablesController {

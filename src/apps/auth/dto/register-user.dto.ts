@@ -6,7 +6,7 @@ import {
   ContainNumber,
   ContainSmallLetter,
   ContainSymbol,
-} from '@libs/validationDecorator';
+} from '@libs/common';
 
 export class RegisterUserDto {
   @ApiProperty({ required: true })

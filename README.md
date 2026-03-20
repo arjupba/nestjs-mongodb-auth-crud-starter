@@ -32,6 +32,7 @@ $ npm install
 
 # generate crud end points
 $ nest g resource app/vegetables
+$ nest g library logger  # path @libs
 ```
 
 ## Compile and run the project

@@ -6,7 +6,7 @@ import { QueryMenType } from 'nestjs-querymen';
 import { RegisterUserDto } from '@apps/auth/dto/register-user.dto';
 import { UserDocument, UserEntity } from '@apps/users/entities/user.entity';
 
-import { ObjectLiteral } from '@libs/golbal';
+import { ObjectLiteral } from '@libs/common';
 
 @Injectable()
 export class UsersService {

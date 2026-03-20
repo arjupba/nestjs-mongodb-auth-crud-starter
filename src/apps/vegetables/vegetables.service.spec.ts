@@ -4,6 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VegetableEntity } from '@apps/vegetables/entities/vegetable.entity';
 import { VegetablesService } from '@apps/vegetables/vegetables.service';
 
+import { LoggerModule } from '@libs/logger';
+
 describe('VegetablesService', () => {
   let service: VegetablesService;
   const mockVegetableModel = {
@@ -16,6 +18,7 @@ describe('VegetablesService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot('vegetableModule')],
       providers: [
         VegetablesService,
         {

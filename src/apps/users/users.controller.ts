@@ -16,8 +16,7 @@ import { RoleEnum } from '@apps/users/domain/user.type';
 import { UpdateUserDtoAdmin, UpdateUserDtoSelf } from '@apps/users/dto/update-user.dto';
 import { UsersService } from '@apps/users/users.service';
 
-import { NotFoundInterceptor } from '@libs/notFoundInterceptor';
-import { ParamIdDto } from '@libs/paramIdDto';
+import { NotFoundInterceptor, ParamIdDto } from '@libs/common';
 
 @Controller('users')
 export class UsersController {

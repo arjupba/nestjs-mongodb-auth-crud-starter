@@ -4,7 +4,7 @@ import sleep from 'await-sleep';
 import { AxiosBasicCredentials, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
-import { ObjectLiteral } from '@libs/golbal';
+import { ObjectLiteral } from '@libs/common';
 
 export type ApiConfigParams = {
   timeout?: number;

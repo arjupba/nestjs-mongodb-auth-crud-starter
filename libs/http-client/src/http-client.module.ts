@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 
-import { HttpClientService } from '@libs/http-client';
+import { HttpClientService } from '@libs/http-client/http-client.service';
 import { LoggerModule } from '@libs/logger';
 
 @Module({
