@@ -13,7 +13,7 @@ const Authenticate = () =>
     UseGuards(ValidatedLocalAuthGuard),
     ApiBody({ type: LoginDto }),
   );
-const Auth = (role?: RoleEnum): ClassDecorator & MethodDecorator => {
+const Auth = (roles?: RoleEnum[]): ClassDecorator & MethodDecorator => {
   return ((
     target: any,
     propertyKey?: string | symbol,
@@ -21,12 +21,14 @@ const Auth = (role?: RoleEnum): ClassDecorator & MethodDecorator => {
   ) => {
     const base = [ApiBearerAuth()];
 
-    if (role) base.push(UseGuards(RoleGuard(role)));
+    if (roles?.length) {
+      base.push(UseGuards(RoleGuard(roles)));
+    }
 
-    if (descriptor && role) {
+    if (descriptor && roles) {
       applyDecorators(
         ...base,
-        ApiOperation({ description: `**Required Role:** ${role}` }),
+        ApiOperation({ description: `**Required Roles:** ${roles.join(' / ')}` }),
       )(target, propertyKey!, descriptor);
 
       return;

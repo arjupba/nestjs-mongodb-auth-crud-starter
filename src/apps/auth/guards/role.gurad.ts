@@ -4,7 +4,7 @@ import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '@apps/auth/guards/jwt.auth.guard';
 import { RoleEnum } from '@apps/users/domain/user.type';
 
-const RoleGuard = (requiredRole: RoleEnum): Type<CanActivate> => {
+const RoleGuard = (requiredRoles: RoleEnum[]): Type<CanActivate> => {
   class RoleGuardMixin implements CanActivate {
     constructor(@Inject(Reflector) private readonly reflector: Reflector) {}
 
@@ -19,7 +19,7 @@ const RoleGuard = (requiredRole: RoleEnum): Type<CanActivate> => {
       const request = context.switchToHttp().getRequest();
       const user = request.user;
 
-      return user?.activeRole === requiredRole;
+      return requiredRoles.includes(user?.activeRole);
     }
   }
 

@@ -36,26 +36,26 @@ export class UsersController {
     },
     sort: '-createdAt',
   })
-  @Auth(RoleEnum.Admin)
+  @Auth([RoleEnum.Admin])
   findAll(@QueryMen() q: QueryMenType) {
     return this.usersService.findAll(q);
   }
 
   @Get('self')
-  @Auth(RoleEnum.User)
+  @Auth([RoleEnum.User])
   findSelf(@Request() req: AuthenticatedRequest) {
     return this.usersService.findOne(req.user.id);
   }
 
   @Get(':id')
-  @Auth(RoleEnum.Admin)
+  @Auth([RoleEnum.Admin])
   @UseInterceptors(new NotFoundInterceptor('No user found for given Id'))
   findOne(@Param() param: ParamIdDto) {
     return this.usersService.findOne(param.id);
   }
 
   @Patch('self')
-  @Auth(RoleEnum.User)
+  @Auth([RoleEnum.User])
   updateSelf(
     @Request() req: AuthenticatedRequest,
     @Body() updateUserDto: UpdateUserDtoSelf,
@@ -64,14 +64,14 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @Auth(RoleEnum.Admin)
+  @Auth([RoleEnum.Admin])
   @UseInterceptors(new NotFoundInterceptor('No user found for given Id'))
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDtoAdmin) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @Auth(RoleEnum.Admin)
+  @Auth([RoleEnum.Admin])
   @UseInterceptors(new NotFoundInterceptor('No user found for given Id'))
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
