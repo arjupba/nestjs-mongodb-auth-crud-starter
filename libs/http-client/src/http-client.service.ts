@@ -1,8 +1,9 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import sleep from 'await-sleep';
 import { AxiosBasicCredentials, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 import { ObjectLiteral } from '@libs/common';
 
@@ -46,7 +47,7 @@ export class HttpClientService {
         ) {
           await sleep(retryDelay);
 
-          this.logger.warn(
+          this.logger.info(
             `Unable to connect with API: ${options.method}/${options.url}. Retrying to the API call. Retry count: ${retryCount}. Message: ${error.message || JSON.stringify(error)}`,
           );
 
