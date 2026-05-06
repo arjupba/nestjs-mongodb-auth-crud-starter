@@ -4,9 +4,9 @@ import { IsString } from 'class-validator';
 export class CreateVegetableDto {
   @ApiProperty({ required: true })
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({ required: true })
   @IsString()
-  color: string;
+  color!: string;
 }
