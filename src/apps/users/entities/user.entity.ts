@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import bcrypt from 'bcryptjs';
-import { HydratedDocument } from 'mongoose';
+import { CallbackError, HydratedDocument } from 'mongoose';
 
 import { RoleEnum } from '@apps/users/domain/user.type';
 
@@ -11,31 +11,31 @@ export type UserDocument = HydratedDocument<UserEntity>;
 })
 export class UserEntity {
   @Prop({ required: true })
-  firstName: string;
+  firstName!: string;
 
   @Prop({ required: true })
-  lastName: string;
+  lastName!: string;
 
   @Prop({ required: true, unique: true })
-  email: string;
+  email!: string;
 
   @Prop({ required: true })
-  password: string;
+  password!: string;
 
   @Prop({ required: false })
-  avatar: string;
+  avatar?: string;
 
   @Prop({
     default: RoleEnum.User,
     enum: RoleEnum,
     type: [String],
   })
-  roles: string[];
+  roles!: string[];
 
   @Prop({ default: false })
-  isEnabled: Boolean;
+  isEnabled!: Boolean;
 
-  view: Function;
+  view?: Function;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserEntity);
@@ -52,7 +52,7 @@ UserSchema.pre('save', async function (next) {
 
       next();
     } catch (err) {
-      return next(err);
+      return next(err as CallbackError);
     }
   } else {
     return next();

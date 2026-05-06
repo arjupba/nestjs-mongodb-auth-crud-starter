@@ -8,12 +8,12 @@ export type VegetableDocument = HydratedDocument<VegetableEntity>;
 })
 export class VegetableEntity {
   @Prop({ required: true })
-  name: string;
+  name!: string;
 
   @Prop({ required: true })
-  color: string;
+  color!: string;
 
-  view: Function;
+  view?: Function;
 }
 
 export const VegetableSchema = SchemaFactory.createForClass(VegetableEntity);
