@@ -13,7 +13,7 @@ export class VegetableEntity {
   @Prop({ required: true })
   color!: string;
 
-  view?: Function;
+  view!: Function;
 }
 
 export const VegetableSchema = SchemaFactory.createForClass(VegetableEntity);

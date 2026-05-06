@@ -35,7 +35,7 @@ export class UserEntity {
   @Prop({ default: false })
   isEnabled!: Boolean;
 
-  view?: Function;
+  view!: Function;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserEntity);
