@@ -12,8 +12,8 @@
     "allowSyntheticDefaultImports": true,
     "target": "ES2023",
     "sourceMap": true,
+    "types": ["jest", "node"],
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -22,30 +22,14 @@
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@apps/*": [
-        "src/apps/*"
-      ],
-      "@libs/*": [
-        "libs/*"
-      ],
-      "@libs/common": [
-        "libs/common/src"
-      ],
-      "@libs/common/*": [
-        "libs/common/src/*"
-      ],
-      "@libs/http-client": [
-        "libs/http-client/src"
-      ],
-      "@libs/http-client/*": [
-        "libs/http-client/src/*"
-      ],
-      "@libs/logger": [
-        "libs/logger/src"
-      ],
-      "@libs/logger/*": [
-        "libs/logger/src/*"
-      ]
+      "@src/*": ["./src/*"],
+      "@apps/*": ["./src/apps/*"],
+      "@libs/common": ["./libs/common/src"],
+      "@libs/common/*": ["./libs/common/src/*"],
+      "@libs/http-client": ["./libs/http-client/src"],
+      "@libs/http-client/*": ["./libs/http-client/src/*"],
+      "@libs/logger": ["./libs/logger/src"],
+      "@libs/logger/*": ["./libs/logger/src/*"]
     }
   }
 }

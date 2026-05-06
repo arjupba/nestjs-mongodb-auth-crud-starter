@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { AppModule as srcAppModule } from 'src/apps/app.module';
-import appConfig from 'src/config/app';
+import { AppModule as srcAppModule } from '@src/apps/app.module';
+import appConfig from '@src/config/app';
 
 import { LoggerModule } from '@libs/logger';
 

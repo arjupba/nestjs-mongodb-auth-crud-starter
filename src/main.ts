@@ -5,8 +5,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import morgan from 'morgan';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
-import { AppModule } from 'src/app.module';
-import { AppConfig } from 'src/config/app';
+import { AppModule } from '@src/app.module';
+import { AppConfig } from '@src/config/app';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
