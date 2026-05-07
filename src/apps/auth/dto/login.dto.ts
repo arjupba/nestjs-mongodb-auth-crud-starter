@@ -7,11 +7,11 @@ export class LoginDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsEmail()
-  username: string;
+  username!: string;
 
   @ApiProperty({ required: true })
   @IsNotEmpty()
-  password: string;
+  password!: string;
 
   @ApiProperty({
     enum: RoleEnum,
@@ -20,5 +20,5 @@ export class LoginDto {
     required: true,
   })
   @IsEnum(RoleEnum)
-  role: RoleEnum;
+  role!: RoleEnum;
 }

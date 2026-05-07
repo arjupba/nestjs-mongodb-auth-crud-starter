@@ -11,15 +11,15 @@ import {
 export class RegisterUserDto {
   @ApiProperty({ required: true })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({ required: true })
   @IsString()
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({ required: true })
   @IsString()
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({ required: true })
   @IsString()
@@ -28,5 +28,5 @@ export class RegisterUserDto {
   @ContainSmallLetter()
   @ContainNumber()
   @ContainSymbol()
-  password: string;
+  password!: string;
 }
