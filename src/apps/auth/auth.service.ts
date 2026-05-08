@@ -1,6 +1,7 @@
 import { ConflictException, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcryptjs';
+import { MongoServerError } from 'mongodb';
 
 import { RoleEnum, User } from '@apps/users/domain/user.type';
 import { UsersService } from '@apps/users/users.service';
@@ -70,7 +71,7 @@ export class AuthService {
         user,
       };
     } catch (error) {
-      if (error.code === 11000) {
+      if ((error as MongoServerError).code === 11000) {
         throw new ConflictException(`User already registered with mail id ${body.email}`);
       }
 
