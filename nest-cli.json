@@ -7,6 +7,15 @@
     "webpack": true
   },
   "projects": {
+    "auth-guards": {
+      "type": "library",
+      "root": "libs/auth-guards",
+      "entryFile": "index",
+      "sourceRoot": "libs/auth-guards/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/auth-guards/tsconfig.lib.json"
+      }
+    },
     "common": {
       "type": "library",
       "root": "libs/common",

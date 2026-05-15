@@ -11,11 +11,11 @@ import {
 import { QueryMen, type QueryMenType, UseQueryMen } from 'nestjs-querymen';
 
 import type { AuthenticatedRequest } from '@apps/auth/domain/auth.type';
-import { Auth } from '@apps/auth/guards';
 import { RoleEnum } from '@apps/users/domain/user.type';
 import { UpdateUserDtoAdmin, UpdateUserDtoSelf } from '@apps/users/dto/update-user.dto';
 import { UsersService } from '@apps/users/users.service';
 
+import { Auth } from '@libs/auth-guards';
 import { NotFoundInterceptor, ParamIdDto } from '@libs/common';
 
 @Controller('users')

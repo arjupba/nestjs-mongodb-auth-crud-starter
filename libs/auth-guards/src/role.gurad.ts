@@ -1,8 +1,9 @@
 import { CanActivate, ExecutionContext, Inject, Type, mixin } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { IS_PUBLIC_KEY } from '@apps/auth/guards/jwt.auth.guard';
 import { RoleEnum } from '@apps/users/domain/user.type';
+
+import { IS_PUBLIC_KEY } from '@libs/auth-guards/jwt.auth.guard';
 
 const RoleGuard = (requiredRoles: RoleEnum[]): Type<CanActivate> => {
   class RoleGuardMixin implements CanActivate {

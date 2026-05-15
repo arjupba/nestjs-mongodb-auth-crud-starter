@@ -4,7 +4,8 @@ import { AuthService } from '@apps/auth/auth.service';
 import type { AuthenticatedRequest } from '@apps/auth/domain/auth.type';
 import { LoginDto } from '@apps/auth/dto/login.dto';
 import { RegisterUserDto } from '@apps/auth/dto/register-user.dto';
-import { Authenticate, Public } from '@apps/auth/guards';
+
+import { Authenticate, Public } from '@libs/auth-guards';
 
 @Controller('auth')
 export class AuthController {

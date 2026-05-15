@@ -22,14 +22,16 @@
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@src/*": ["./src/*"],
       "@apps/*": ["./src/apps/*"],
+      "@libs/auth-guards": ["./libs/auth-guards/src"],
+      "@libs/auth-guards/*": ["./libs/auth-guards/src/*"],
       "@libs/common": ["./libs/common/src"],
       "@libs/common/*": ["./libs/common/src/*"],
       "@libs/http-client": ["./libs/http-client/src"],
       "@libs/http-client/*": ["./libs/http-client/src/*"],
       "@libs/logger": ["./libs/logger/src"],
-      "@libs/logger/*": ["./libs/logger/src/*"]
+      "@libs/logger/*": ["./libs/logger/src/*"],
+      "@src/*": ["./src/*"]
     }
   }
 }
